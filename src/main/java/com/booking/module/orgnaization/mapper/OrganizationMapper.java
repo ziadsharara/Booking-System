@@ -33,7 +33,7 @@ public class OrganizationMapper {
             .build();
   }
 
-  public List<GetOrgDTO> toGetUserDTOList(List<Organization> organizations) {
+  public List<GetOrgDTO> toGetOrgsDTOList(List<Organization> organizations) {
     List<GetOrgDTO> dtos = new ArrayList<>();
     for (Organization organization : organizations) {
       dtos.add(toGetOrgDTO(organization));

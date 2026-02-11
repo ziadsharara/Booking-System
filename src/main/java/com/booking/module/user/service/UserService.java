@@ -76,6 +76,7 @@ public class UserService {
   }
 
   // Delete User
+  @Transactional
   public void deleteUser(Long id) {
     if (!userRepository.existsById(id)) {
       throw new IllegalArgumentException("There's no user with this ID");

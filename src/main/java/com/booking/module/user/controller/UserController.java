@@ -22,8 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-  public final UserService userService;
-  public final UserMapper userMapper;
+  private final UserService userService;
+  private final UserMapper userMapper;
 
   // Create User
   @PostMapping

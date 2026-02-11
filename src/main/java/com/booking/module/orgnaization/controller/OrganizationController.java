@@ -19,8 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrganizationController {
 
-  public final OrganizationService organizationService;
-  public final OrganizationMapper organizationMapper;
+  private final OrganizationService organizationService;
+  private final OrganizationMapper organizationMapper;
 
   // Create Organization
   @PostMapping
@@ -29,7 +29,7 @@ public class OrganizationController {
       Organization organization = organizationService.createOrganization(createOrgDTO);
       GetOrgDTO getOrgDTO = organizationMapper.toGetOrgDTO(organization);
 
-      return ResponseEntity.status(HttpStatus.CREATED).build();
+      return ResponseEntity.status(HttpStatus.CREATED).body(getOrgDTO);
     } catch (IllegalArgumentException e) {
       return ResponseEntity.badRequest().build();
     }
@@ -52,7 +52,7 @@ public class OrganizationController {
   @GetMapping
   public ResponseEntity<List<GetOrgDTO>> getAllOrgs() {
     List<Organization> organizations = organizationService.getAllOrganization();
-    List<GetOrgDTO> orgDTOS = organizationMapper.toGetUserDTOList(organizations);
+    List<GetOrgDTO> orgDTOS = organizationMapper.toGetOrgsDTOList(organizations);
 
     return ResponseEntity.ok(orgDTOS);
   }
@@ -82,7 +82,12 @@ public class OrganizationController {
   }
 
   @DeleteMapping("/{id}")
-  public void deleteOrg(@PathVariable Long id) {
-    organizationService.deleteOrganization(id);
+  public ResponseEntity<GetOrgDTO> deleteOrg(@PathVariable Long id) {
+    try {
+      organizationService.deleteOrganization(id);
+      return ResponseEntity.noContent().build();  // 204 No Content
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.notFound().build();   // 404 Not Found
+    }
   }
 }
