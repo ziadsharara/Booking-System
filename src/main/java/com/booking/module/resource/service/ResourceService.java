@@ -83,6 +83,22 @@ public class ResourceService {
      resourceRepository.deleteAll(resources);
   }
 
+  @Transactional
+  public Resource disableResource(Long id) {
+    Resource resource = getResourceById(id);
+
+    resource.setStatus(ResourceStatus.DISABLED);
+    return resourceRepository.save(resource);
+  }
+
+  @Transactional
+  public Resource enableResource(Long id) {
+    Resource resource = getResourceById(id);
+
+    resource.setStatus(ResourceStatus.ENABLED);
+    return resourceRepository.save(resource);
+  }
+
   // Enable/Disable status
   @Transactional
   public Resource toggleResourceStatus(Long id) {

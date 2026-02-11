@@ -49,6 +49,12 @@ public class Booking {
   @Column(name = "resource_id", nullable = false)
   private Long resourceId;
 
+  @Column(name = "organization_id", nullable = false)
+  private Long organizationId;
+
+  @Column(name = "approved_by")
+  private Long approvedBy;
+
   @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt;
