@@ -30,6 +30,10 @@ public class Resource {
   @Column(columnDefinition = "TEXT")
   private String description;
 
+  @Column(nullable = false)
+  @Enumerated(value = EnumType.STRING)
+  private ResourceStatus status;
+
   @Column(name = "organization_id", nullable = false)
   private Long organizationId;
 

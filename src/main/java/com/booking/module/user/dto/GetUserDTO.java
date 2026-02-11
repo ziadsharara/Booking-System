@@ -1,10 +1,7 @@
 package com.booking.module.user.dto;
 
 import com.booking.module.user.entity.UserRole;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 

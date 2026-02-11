@@ -8,6 +8,7 @@ import com.booking.module.user.mapper.UserMapper;
 import com.booking.module.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -86,5 +87,9 @@ public class UserController {
     return ResponseEntity.ok(userDTO);
   }
 
+  @DeleteMapping("/{id}")
+  public void deleteUser(@PathVariable Long id) {
+    userService.deleteUser(id);
+  }
 
 }
