@@ -43,17 +43,10 @@ public class AuthService {
     User savedUser = userRepository.save(user);
 
     // Generate JWT token
-    String token = jwtUtil.generateToken(
-            savedUser.getId(),
-            savedUser.getEmail(),
-            savedUser.getRole().name(),
-            savedUser.getOrganizationId()
-    );
 
     return AuthResponseDTO.builder()
             .id(savedUser.getId())
             .email(savedUser.getEmail())
-            .token(token)
             .message("User registered successfully")
             .build();
   }
@@ -88,19 +81,4 @@ public class AuthService {
             .build();
   }
 
-  /**
-   * Get user by ID from the users table.
-   */
-  public User getUserById(Long id) {
-    return userRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("User not found"));
-  }
-
-  /**
-   * Get user by email from the users table.
-   */
-  public User getUserByEmail(String email) {
-    return userRepository.findByEmail(email)
-            .orElseThrow(() -> new IllegalArgumentException("User not found"));
-  }
 }
