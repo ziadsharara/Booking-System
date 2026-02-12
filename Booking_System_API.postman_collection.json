@@ -1,55 +1,103 @@
 {
   "info": {
     "name": "Booking System API",
-    "description": "Complete Booking System API with Authentication & Authorization",
+    "description": "Complete Booking System API — All endpoints with auto-JWT injection.\n\nHow it works:\n1. Run 'Register User' or 'Login User' first.\n2. The test script automatically saves the JWT token to {{jwt_token}}.\n3. Every other request inherits the Bearer token from the collection-level auth — no manual copy-paste needed.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
   "item": [
     {
       "name": "AUTH",
       "item": [
         {
           "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var json = pm.response.json();",
+                  "    if (json.token) {",
+                  "        pm.collectionVariables.set('jwt_token', json.token);",
+                  "        console.log('JWT token saved from register response');",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
+            "auth": { "type": "noauth" },
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@company.com\",\n  \"password\": \"SecurePass123@\"\n}"
+              "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@company.com\",\n  \"password\": \"SecurePass123@\",\n  \"organizationId\": 1\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/auth/register",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
               "path": ["api", "auth", "register"]
             }
           }
         },
         {
           "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var json = pm.response.json();",
+                  "    if (json.token) {",
+                  "        pm.collectionVariables.set('jwt_token', json.token);",
+                  "        console.log('JWT token saved from login response');",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
+            "auth": { "type": "noauth" },
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"admin@company.com\",\n  \"password\": \"SecurePass123@\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/auth/login",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
               "path": ["api", "auth", "login"]
             }
           }
@@ -64,24 +112,15 @@
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{admin_token}}"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Tech Company Inc\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/organization",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/organization",
+              "host": ["{{base_url}}"],
               "path": ["api", "organization"]
             }
           }
@@ -90,17 +129,9 @@
           "name": "Get Organization by ID",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{admin_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/organization/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/organization/1",
+              "host": ["{{base_url}}"],
               "path": ["api", "organization", "1"]
             }
           }
@@ -109,17 +140,9 @@
           "name": "Get All Organizations",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{admin_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/organization",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/organization",
+              "host": ["{{base_url}}"],
               "path": ["api", "organization"]
             }
           }
@@ -128,17 +151,9 @@
           "name": "Get Organization by Name",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{admin_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/organization/name/Tech Company Inc",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/organization/name/Tech Company Inc",
+              "host": ["{{base_url}}"],
               "path": ["api", "organization", "name", "Tech Company Inc"]
             }
           }
@@ -148,24 +163,15 @@
           "request": {
             "method": "PUT",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{admin_token}}"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Tech Company Updated\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/organization/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/organization/1",
+              "host": ["{{base_url}}"],
               "path": ["api", "organization", "1"]
             }
           }
@@ -174,17 +180,9 @@
           "name": "Delete Organization",
           "request": {
             "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{admin_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/organization/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/organization/1",
+              "host": ["{{base_url}}"],
               "path": ["api", "organization", "1"]
             }
           }
@@ -199,24 +197,15 @@
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@company.com\",\n  \"password\": \"SecurePass123@\",\n  \"role\": \"EMPLOYEE\",\n  \"organizationId\": 1\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/users",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/users",
+              "host": ["{{base_url}}"],
               "path": ["api", "users"]
             }
           }
@@ -225,17 +214,9 @@
           "name": "Get User by ID",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/users/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/users/1",
+              "host": ["{{base_url}}"],
               "path": ["api", "users", "1"]
             }
           }
@@ -244,17 +225,9 @@
           "name": "Get All Users in My Organization",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/users/organization/my-org/users",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/users/organization/my-org/users",
+              "host": ["{{base_url}}"],
               "path": ["api", "users", "organization", "my-org", "users"]
             }
           }
@@ -263,17 +236,9 @@
           "name": "Get User by Email",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/users/email/john@company.com",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/users/email/john@company.com",
+              "host": ["{{base_url}}"],
               "path": ["api", "users", "email", "john@company.com"]
             }
           }
@@ -283,24 +248,15 @@
           "request": {
             "method": "PUT",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"John Updated\",\n  \"email\": \"john.updated@company.com\",\n  \"role\": \"EMPLOYEE\"\n}"
+              "raw": "{\n  \"name\": \"John Updated\",\n  \"role\": \"EMPLOYEE\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/users/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/users/1",
+              "host": ["{{base_url}}"],
               "path": ["api", "users", "1"]
             }
           }
@@ -309,17 +265,9 @@
           "name": "Delete User",
           "request": {
             "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/users/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/users/1",
+              "host": ["{{base_url}}"],
               "path": ["api", "users", "1"]
             }
           }
@@ -334,24 +282,15 @@
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Conference Room A\",\n  \"description\": \"Main conference room with projector\",\n  \"organizationId\": 1,\n  \"status\": \"ENABLED\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/resources",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/resources",
+              "host": ["{{base_url}}"],
               "path": ["api", "resources"]
             }
           }
@@ -360,17 +299,9 @@
           "name": "Get Resource by ID",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/resources/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/resources/1",
+              "host": ["{{base_url}}"],
               "path": ["api", "resources", "1"]
             }
           }
@@ -379,17 +310,9 @@
           "name": "Get All Resources in My Organization",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/resources/organization/my-org/resources",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/resources/organization/my-org/resources",
+              "host": ["{{base_url}}"],
               "path": ["api", "resources", "organization", "my-org", "resources"]
             }
           }
@@ -398,17 +321,9 @@
           "name": "Get Resource by Name",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/resources/name/Conference Room A",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/resources/name/Conference Room A",
+              "host": ["{{base_url}}"],
               "path": ["api", "resources", "name", "Conference Room A"]
             }
           }
@@ -418,24 +333,15 @@
           "request": {
             "method": "PUT",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Conference Room Updated\",\n  \"description\": \"Updated description\",\n  \"status\": \"DISABLED\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/resources/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/resources/1",
+              "host": ["{{base_url}}"],
               "path": ["api", "resources", "1"]
             }
           }
@@ -444,17 +350,9 @@
           "name": "Toggle Resource Status (MANAGER ONLY)",
           "request": {
             "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/resources/1/toggle-status",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/resources/1/toggle-status",
+              "host": ["{{base_url}}"],
               "path": ["api", "resources", "1", "toggle-status"]
             }
           }
@@ -463,17 +361,9 @@
           "name": "Delete Resource (MANAGER ONLY)",
           "request": {
             "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/resources/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/resources/1",
+              "host": ["{{base_url}}"],
               "path": ["api", "resources", "1"]
             }
           }
@@ -482,17 +372,9 @@
           "name": "Delete All Resources in My Organization (MANAGER ONLY)",
           "request": {
             "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/resources/organization/my-org/delete-all",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/resources/organization/my-org/delete-all",
+              "host": ["{{base_url}}"],
               "path": ["api", "resources", "organization", "my-org", "delete-all"]
             }
           }
@@ -500,31 +382,22 @@
       ]
     },
     {
-      "name": "BOOKING (VARIOUS PERMISSIONS)",
+      "name": "BOOKING",
       "item": [
         {
           "name": "Create Booking (EMPLOYEE ONLY)",
           "request": {
             "method": "POST",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{employee_token}}"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": 5,\n  \"resourceId\": 10,\n  \"organizationId\": 1,\n  \"startTime\": \"2026-02-15T10:00:00\",\n  \"endTime\": \"2026-02-15T11:00:00\"\n}"
+              "raw": "{\n  \"userId\": 5,\n  \"resourceId\": 1,\n  \"organizationId\": 1,\n  \"startTime\": \"2026-02-15T10:00:00\",\n  \"endTime\": \"2026-02-15T11:00:00\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/bookings",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/bookings",
+              "host": ["{{base_url}}"],
               "path": ["api", "bookings"]
             }
           }
@@ -533,17 +406,9 @@
           "name": "Get Booking by ID",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/bookings/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/bookings/1",
+              "host": ["{{base_url}}"],
               "path": ["api", "bookings", "1"]
             }
           }
@@ -552,17 +417,9 @@
           "name": "Get Bookings by User (MANAGER ONLY)",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/bookings/user/5",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/bookings/user/5",
+              "host": ["{{base_url}}"],
               "path": ["api", "bookings", "user", "5"]
             }
           }
@@ -571,18 +428,10 @@
           "name": "Get Bookings by Resource (MANAGER ONLY)",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/bookings/resource/10",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "bookings", "resource", "10"]
+              "raw": "{{base_url}}/api/bookings/resource/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bookings", "resource", "1"]
             }
           }
         },
@@ -590,17 +439,9 @@
           "name": "Get Bookings by Status (MANAGER ONLY)",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/bookings/status/INITIAL",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/bookings/status/INITIAL",
+              "host": ["{{base_url}}"],
               "path": ["api", "bookings", "status", "INITIAL"]
             }
           }
@@ -609,17 +450,9 @@
           "name": "Get In-Progress Bookings (MANAGER ONLY)",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/bookings/in-progress",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/bookings/in-progress",
+              "host": ["{{base_url}}"],
               "path": ["api", "bookings", "in-progress"]
             }
           }
@@ -628,17 +461,9 @@
           "name": "Get User Pending Bookings",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/bookings/user/5/pending",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/bookings/user/5/pending",
+              "host": ["{{base_url}}"],
               "path": ["api", "bookings", "user", "5", "pending"]
             }
           }
@@ -648,24 +473,15 @@
           "request": {
             "method": "PUT",
             "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
+              { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"approvedByUserId\": 3\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/bookings/1/approve",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/bookings/1/approve",
+              "host": ["{{base_url}}"],
               "path": ["api", "bookings", "1", "approve"]
             }
           }
@@ -674,17 +490,9 @@
           "name": "Start Booking (MANAGER ONLY)",
           "request": {
             "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/bookings/1/start",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/bookings/1/start",
+              "host": ["{{base_url}}"],
               "path": ["api", "bookings", "1", "start"]
             }
           }
@@ -693,17 +501,9 @@
           "name": "Complete Booking (MANAGER ONLY)",
           "request": {
             "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/bookings/1/complete",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/bookings/1/complete",
+              "host": ["{{base_url}}"],
               "path": ["api", "bookings", "1", "complete"]
             }
           }
@@ -712,17 +512,9 @@
           "name": "Cancel Booking (MANAGER & EMPLOYEE)",
           "request": {
             "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/bookings/1/cancel",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/bookings/1/cancel",
+              "host": ["{{base_url}}"],
               "path": ["api", "bookings", "1", "cancel"]
             }
           }
@@ -731,39 +523,14 @@
           "name": "Delete Booking (MANAGER & EMPLOYEE)",
           "request": {
             "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{manager_token}}"
-              }
-            ],
             "url": {
-              "raw": "http://localhost:8080/api/bookings/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
+              "raw": "{{base_url}}/api/bookings/1",
+              "host": ["{{base_url}}"],
               "path": ["api", "bookings", "1"]
             }
           }
         }
       ]
-    }
-  ],
-  "variable": [
-    {
-      "key": "admin_token",
-      "value": "",
-      "type": "string"
-    },
-    {
-      "key": "manager_token",
-      "value": "",
-      "type": "string"
-    },
-    {
-      "key": "employee_token",
-      "value": "",
-      "type": "string"
     }
   ]
 }
