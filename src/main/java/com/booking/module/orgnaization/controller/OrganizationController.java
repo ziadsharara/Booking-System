@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +23,10 @@ public class OrganizationController {
   private final OrganizationService organizationService;
   private final OrganizationMapper organizationMapper;
 
-  // Create Organization
+  /**
+   * Create Organization - Only ADMIN
+   */
+  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping
   public ResponseEntity<GetOrgDTO> createOrganization(@Valid @RequestBody CreateOrgDTO createOrgDTO) {
     try {
@@ -35,9 +39,12 @@ public class OrganizationController {
     }
   }
 
-  // Get Organization by id
+  /**
+   * Get Organization by ID - Only ADMIN
+   */
+  @PreAuthorize("hasRole('ADMIN')")
   @GetMapping("/{id}")
-  public ResponseEntity<GetOrgDTO> getorgByID(@PathVariable Long id) {
+  public ResponseEntity<GetOrgDTO> getOrgByID(@PathVariable Long id) {
     try {
       Organization organization = organizationService.getOrganizationById(id);
       GetOrgDTO getOrgDTO = organizationMapper.toGetOrgDTO(organization);
@@ -48,7 +55,10 @@ public class OrganizationController {
     }
   }
 
-  // Get all organizations
+  /**
+   * Get All Organizations - Only ADMIN
+   */
+  @PreAuthorize("hasRole('ADMIN')")
   @GetMapping
   public ResponseEntity<List<GetOrgDTO>> getAllOrgs() {
     List<Organization> organizations = organizationService.getAllOrganization();
@@ -57,6 +67,10 @@ public class OrganizationController {
     return ResponseEntity.ok(orgDTOS);
   }
 
+  /**
+   * Get Organization by Name - Only ADMIN
+   */
+  @PreAuthorize("hasRole('ADMIN')")
   @GetMapping("/name/{name}")
   public ResponseEntity<GetOrgDTO> getOrgByName(@PathVariable String name) {
     try {
@@ -69,6 +83,10 @@ public class OrganizationController {
     }
   }
 
+  /**
+   * Update Organization - Only ADMIN
+   */
+  @PreAuthorize("hasRole('ADMIN')")
   @PutMapping("/{id}")
   public ResponseEntity<GetOrgDTO> updateOrg(@PathVariable Long id, @Valid @RequestBody UpdateOrdDTO updateOrdDTO) {
     try {
@@ -81,8 +99,12 @@ public class OrganizationController {
     }
   }
 
+  /**
+   * Delete Organization - Only ADMIN
+   */
+  @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{id}")
-  public ResponseEntity<GetOrgDTO> deleteOrg(@PathVariable Long id) {
+  public ResponseEntity<Void> deleteOrg(@PathVariable Long id) {
     try {
       organizationService.deleteOrganization(id);
       return ResponseEntity.noContent().build();  // 204 No Content
